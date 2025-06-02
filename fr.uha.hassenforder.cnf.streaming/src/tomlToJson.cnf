@@ -1,0 +1,182 @@
+package fr.uha.montivincent.jcupnflex.sample.calculator.reader;
+
+parser import code {: 
+import java.util.TreeMap;
+import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+:}
+
+parser code {: 
+
+    public void report_error(String message, Object info) {
+        StringBuffer m = new StringBuffer("Error");
+        m.append(info.toString());
+        m.append(" : "+message);
+        System.err.println(m.toString());
+    }
+
+    public void report_fatal_error(String message, Object info) {
+        report_error(message, info);
+        System.exit(1);
+    }
+
+    private Map<String, Object> values = new LinkedHashMap<>();
+
+    public void setValue(String compoundKey, Object value) {
+        String[] parts = compoundKey.split("(?<!\\\\)\\.");
+        Map<String, Object> current = values;
+
+        for (int i = 0; i < parts.length - 1; i++) {
+            String part = cleanKey(parts[i]);
+            current = (Map<String, Object>) current.computeIfAbsent(part, k -> new LinkedHashMap<>());
+        }
+
+        current.put(cleanKey(parts[parts.length - 1]), value);
+    }
+
+    private String cleanKey(String raw) {
+        raw = raw.trim();
+        if ((raw.startsWith("\"") && raw.endsWith("\"")) || (raw.startsWith("'") && raw.endsWith("'"))) {
+            raw = raw.substring(1, raw.length() - 1);
+        }
+        return raw.replace("\\\"", "\"");
+    }
+
+    public static String transformMultilineString(String multilineString) {
+        String result = multilineString.replaceAll("(^\"\"\"|\"\"\"$)|(^'''|'''$)", "");
+        result = result.replaceAll("\\\\\\n", "");
+        return result.strip();
+    }
+
+    public static String toJson(Object obj) {
+        return toJson(obj, 0);
+    }
+
+    private static String toJson(Object obj, int indent) {
+        String indentStr = "  ".repeat(indent);
+        StringBuilder sb = new StringBuilder();
+
+        if (obj instanceof Map) {
+            sb.append("{\n");
+            boolean first = true;
+            for (Map.Entry<?, ?> entry : ((Map<?, ?>) obj).entrySet()) {
+                if (!first) sb.append(",\n");
+                sb.append(indentStr).append("  \"")
+                  .append(entry.getKey()).append("\": ")
+                  .append(toJson(entry.getValue(), indent + 1));
+                first = false;
+            }
+            sb.append("\n").append(indentStr).append("}");
+        } else if (obj instanceof List) {
+            sb.append("[\n");
+            boolean first = true;
+            for (Object item : (List<?>) obj) {
+                if (!first) sb.append(",\n");
+                sb.append(indentStr).append("  ")
+                  .append(toJson(item, indent + 1));
+                first = false;
+            }
+            sb.append("\n").append(indentStr).append("]");
+        } else if (obj instanceof String) {
+            String str = (String) obj;
+            str = str.replace("\\", "\\\\").replace("\"", "\\\"");
+            sb.append("\"").append(str).append("\"");
+        } else {
+            sb.append(obj);
+        }
+
+        return sb.toString();
+    }
+:}
+
+scanner code {: 
+    private Symbol fallback () {
+        throw new Error("Unrecognized character '"+yytext()+"' -- ignored");
+    }    
+:}
+
+nonterminal keyval, command, list;
+nonterminal Object value;
+nonterminal String key;
+nonterminal String type;
+nonterminal List<Object> array;
+nonterminal List<Object> array_elements;
+
+terminal String LOCALDATETIME;
+terminal String LOCALDATE;
+terminal String LOCALTIME;
+terminal String FLOAT;
+terminal String INTEGER;
+terminal String BASIC_STRING;
+terminal String MULTILINE_STRING;
+terminal String BOOLEAN;
+terminal String HEXA;
+terminal String OCTAL;
+terminal String BIN;
+terminal String ID;
+
+terminal EOLN;
+terminal void WHITESPACE, COMMENT;
+
+start with command;
+
+command				::= list 							{: System.out.println(toJson(parser.values)); :} ;
+
+list				::= (keyval? EOLN)* keyval? ;
+
+keyval 				::= key:k "=" value:v 				{: parser.setValue(k, v); :} ;
+
+key 				::= type:t "." key:k 				{: RESULT = t + "." + k; :} 
+					  | type:t   						{: RESULT = t; :} ;
+
+
+// Accepte des types entre quotes ou non
+
+type 				::= FLOAT:f 						{: RESULT = f; :}
+					  | ID:id 							{: RESULT = id; :}
+					  | BASIC_STRING:basic 				{: RESULT = basic; :}
+					  | INTEGER:i 						{: RESULT = i; :} ;
+
+value 				::= BASIC_STRING:basic 				{: RESULT = parser.cleanKey(basic); :} 
+					  | MULTILINE_STRING:multi 			{: RESULT = transformMultilineString(multi); :} 
+					  | INTEGER:i 						{: RESULT = parser.cleanKey(i); :}
+					  | FLOAT:f 						{: RESULT = parser.cleanKey(f); :} 
+					  | HEXA:hexa 						{: RESULT = parser.cleanKey(hexa); :} 
+					  | OCTAL:octal 					{: RESULT = parser.cleanKey(octal); :} 
+					  | BIN:bin 						{: RESULT = parser.cleanKey(bin); :} 
+					  | BOOLEAN:bool 					{: RESULT = bool; :} 
+					  | LOCALDATE:ld 					{: RESULT = ld; :} 
+					  | LOCALTIME:lt 					{: RESULT = lt; :} 
+					  | LOCALDATETIME:ldt 				{: RESULT = ldt; :} 
+					  | array:a 						{: RESULT = a; :} ;
+
+array				::= "[" array_elements:a "]" 		{: RESULT = (a == null) ? new ArrayList<>() : a; :} ;
+
+array_elements		::= value:v 						{: RESULT = new ArrayList<>(List.of(v)); :}
+					  | array_elements:a "," value:v 	{: a.add(v); RESULT = a; :} ;
+
+LOCALDATE			::= `[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])` ;
+LOCALTIME			::= `([01][0-9]|2[0-3])(:[0-5][0-9]){2}(\.[0-9]+)?` ;
+LOCALDATETIME		::= `[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3])(:[0-5][0-9]){2}(\.[0-9]+)?(Z|[+-](0[0-9]|1[0-4]):[0-5][0-9])` ;
+
+INTEGER				::= `[+-]?[0-9_]+` ;
+FLOAT				::= `[+-]?(inf|nan)`
+					  | `[+-]?[0-9]+(\.[0-9]+)?[eE][+-]?[0-9]+`
+					  | `[+-]?[0-9_]+\.[0-9_]+` ;
+BOOLEAN				::= "true" | "false" ;
+ID					::= `[A-Za-z_][A-Za-z_0-9]*` ;
+
+BASIC_STRING		::= `\"([^\"]|\\\")*\"`
+					  | `\'([^\']|\\\')*\'` ;
+MULTILINE_STRING	::= `\"\"\"([^"]|\\.)*\"\"\"`
+					  | `'''([^']|\\.)*'''` ;
+
+HEXA				::= `0x[0-9a-fA-F_]+` ;
+OCTAL				::= `0o[0-7_]+` ;
+BIN					::= `0b[01_]+` ;
+
+EOLN				::= `\r\n|\r|\n` ;
+WHITESPACE			::= `[ \t]` ;
+COMMENT				::= `#[^\r\n]*` ;

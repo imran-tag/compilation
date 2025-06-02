@@ -1,0 +1,104 @@
+===== Messages =====
+Info: Generate Terminal file : C:\Users\XPS\Downloads\compilation1\compilation\fr.uha.hassenforder.cnf.streaming\src\fr\uha\hassenforder\logo\reader\ETerminal.java
+Info: Generate Nonterminal file : C:\Users\XPS\Downloads\compilation1\compilation\fr.uha.hassenforder.cnf.streaming\src\fr\uha\hassenforder\logo\reader\ENonterminal.java
+Info: Generate Parser file : C:\Users\XPS\Downloads\compilation1\compilation\fr.uha.hassenforder.cnf.streaming\src\fr\uha\hassenforder\logo\reader\Parser.java
+Info: Generate Dump file : C:\Users\XPS\Downloads\compilation1\compilation\fr.uha.hassenforder.cnf.streaming\src\fr\uha\hassenforder\logo\reader\Parser.dump
+===== Terminals =====
+[0]error [1]EOF [2]OOA [3]__REGEXP_1__ 
+
+
+===== Non terminals =====
+[0]command [1]definition [2]instruction [0]$START<Object> 
+[4]definition$0_many 
+
+===== Productions =====
+[0] $START ::= command EOF 
+[1] command ::= definition$0_many 
+[2] definition ::= instruction __REGEXP_1__ 
+[3] instruction ::= 
+[4] definition$0_many ::= 
+[5] definition$0_many ::= definition$0_many definition 
+
+===== Viable Prefix Recognizer =====
+lalr_state [0]: {
+  [$START ::= (*) command EOF , {EOF[1]}]
+  [command ::= (*) definition$0_many , {EOF[1]}]
+  [definition$0_many ::= (*) , {EOF[1], __REGEXP_1__[3]}]
+  [definition$0_many ::= (*) definition$0_many definition , {EOF[1], __REGEXP_1__[3]}]
+}
+transition on definition$0_many to state [2]
+transition on command to state [1]
+
+-------------------
+lalr_state [1]: {
+  [$START ::= command (*) EOF , {EOF[1]}]
+}
+transition on EOF to state [3]
+
+-------------------
+lalr_state [2]: {
+  [$START ::= command (*) EOF , {EOF[1]}]
+  [definition$0_many ::= definition$0_many (*) definition , {EOF[1], __REGEXP_1__[3]}]
+  [definition ::= (*) instruction __REGEXP_1__ , {EOF[1], __REGEXP_1__[3]}]
+  [instruction ::= (*) , {__REGEXP_1__[3]}]
+}
+transition on instruction to state [5]
+transition on definition to state [4]
+transition on EOF to state [3]
+
+-------------------
+lalr_state [3]: {
+  [$START ::= command EOF (*) , {EOF[1]}]
+}
+
+-------------------
+lalr_state [4]: {
+  [definition$0_many ::= definition$0_many definition (*) , {EOF[1], __REGEXP_1__[3]}]
+}
+
+-------------------
+lalr_state [5]: {
+  [definition ::= instruction (*) __REGEXP_1__ , {EOF[1], __REGEXP_1__[3]}]
+}
+transition on __REGEXP_1__ to state [6]
+
+-------------------
+lalr_state [6]: {
+  [definition ::= instruction __REGEXP_1__ (*) , {EOF[1], __REGEXP_1__[3]}]
+}
+
+-------------------
+-------- ACTION_TABLE --------
+From state #0
+ [default:ERROR]
+ [term 1:REDUCE(3)] [term 3:REDUCE(3)]
+From state #1
+ [default:ERROR]
+ [term 1:SHIFT(3)]
+From state #2
+ [default:ERROR]
+ [term 1:SHIFT(3)] [term 3:REDUCE(2)]
+From state #3
+ [default:ERROR]
+ [term 1:REDUCE(0)]
+From state #4
+ [default:ERROR]
+ [term 1:REDUCE(4)] [term 3:REDUCE(4)]
+From state #5
+ [default:ERROR]
+ [term 3:SHIFT(6)]
+From state #6
+ [default:ERROR]
+ [term 1:REDUCE(1)] [term 3:REDUCE(1)]
+------------------------------
+-------- REDUCE_TABLE --------
+From state #0
+ [non term 0->state 1] [non term 4->state 2]
+From state #1
+From state #2
+ [non term 1->state 4] [non term 2->state 5]
+From state #3
+From state #4
+From state #5
+From state #6
+-----------------------------

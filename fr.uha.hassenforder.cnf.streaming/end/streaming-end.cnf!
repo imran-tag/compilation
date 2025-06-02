@@ -1,0 +1,114 @@
+package fr.uha.hassenforder.logo.reader;
+
+parser import code {:
+import fr.uha.hassenforder.logo.ui.GraphicTurtle;
+import fr.uha.hassenforder.logo.streaming.SymbolTable;
+:}
+
+parser code {:
+
+    public void report_error(String message, Object info) {
+        StringBuffer m = new StringBuffer("Error");
+		m.append (info.toString());
+        m.append(" : "+message);
+        System.err.println(m.toString());
+    }
+
+    public void report_fatal_error(String message, Object info) {
+        report_error(message, info);
+        System.exit(1);
+    }
+    
+    private GraphicTurtle turtle;
+    private SymbolTable table = null;
+
+    public SymbolTable getTable () {
+		if (table == null) table = new SymbolTable ();
+		return table;
+    }
+
+    public GraphicTurtle getTurtle () {
+		return turtle;
+    }
+
+    public void setTurtle (GraphicTurtle turtle) {
+		this.turtle = turtle;
+    }
+
+:}
+
+scanner code {:
+    private Symbol fallback () {
+    	return symbol(ETerminal.OOA);
+	}    
+:}
+
+terminal 				UNARIES;
+terminal Integer		NUMBER;
+terminal String			ID, TEXT;
+
+nonterminal 			command, definition;
+nonterminal 			instruction;
+nonterminal Integer		expr, exprOpt;
+
+precedence left		'+', '-';
+precedence left		'*', '/';
+precedence right	UNARIES;
+
+start with command;
+
+command		::= definition *
+			;
+
+definition ::= instruction ';'
+			;
+
+instruction ::=
+			| 'frame' expr:x ',' expr:y		{: parser.getTurtle().frame   (x, y); :}
+			| 'home'						{: parser.getTurtle().home    (); :}
+			| 'up' exprOpt:p				{: parser.getTurtle().up      (p); :}
+			| 'down' exprOpt:p				{: parser.getTurtle().down    (p); :}
+			| 'right' exprOpt:p				{: parser.getTurtle().right   (p); :}
+			| 'left' exprOpt:p				{: parser.getTurtle().left    (p); :}
+			| 'pen' 'off'					{: parser.getTurtle().penUp	(); :}
+			| 'pen' 'on'					{: parser.getTurtle().penDown (); :}
+			| 'goto' expr:x ',' expr:y		{: parser.getTurtle().go      (x,y); :}
+			| 'move' exprOpt:d				{: parser.getTurtle().move    (d); :}
+			| 'turn' expr:a					{: parser.getTurtle().turn	(a); :}
+			| 'plot' TEXT:t					{: parser.getTurtle().plot	(t); :}
+			| 'ink' expr:i					{: parser.getTurtle().ink	(i); :}
+			| ID:id '=' expr:v				{: parser.getTable().setValue (id, v); :}
+			;
+
+exprOpt 	::=							{: RESULT = 1; :}
+			| expr:v					{: RESULT = v; :}
+			;
+
+expr		::=	'(' expr:e ')'			{: RESULT = e; :}
+			| expr:e1 '+' expr:e2		{: RESULT = e1 + e2; :}
+			| expr:e1 '-' expr:e2		{: RESULT = e1 - e2; :}
+			| expr:e1 '*' expr:e2		{: RESULT = e1 * e2; :}
+			| expr:e1 '/' expr:e2		{: RESULT = e1 / e2; :}
+			| '+' expr:e				{: RESULT = e; :} %prec UNARIES
+			| '-' expr:e				{: RESULT = -e; :} %prec UNARIES
+			| NUMBER:n					{: RESULT = n; :}
+			| ID:id						{: RESULT = parser.getTable().getValue (id); :}
+			;
+
+terminal void SPACES, COMMENT;
+
+COMMENT		::=	`#.*`
+			|	'/*' ~ '*/'
+			;
+
+SPACES		::=	`[ \t\f\r\n]+`
+			;
+
+NUMBER		::=	`[0-9]+`
+			;
+		
+ID			::=	`[A-Za-z_][A-Za-z_0-9]*`
+			;
+
+TEXT		::=	`\"[^\"]*\"`			{: return symbol (ETerminal.TEXT, new String( zzBuffer, zzStartRead+1, zzMarkedPos-zzStartRead-2 )); :}
+			;

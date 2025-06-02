@@ -1,0 +1,148 @@
+package fr.uha.montivincent.jcupnflex.sample.calculator.reader;
+
+ 
+import java.util.TreeMap;
+import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+
+
+
+parser code {:
+ 
+
+    public void report_error(String message, Object info) {
+        StringBuffer m = new StringBuffer("Error");
+        m.append(info.toString());
+        m.append(" : "+message);
+        System.err.println(m.toString());
+    }
+
+    public void report_fatal_error(String message, Object info) {
+        report_error(message, info);
+        System.exit(1);
+    }
+
+    private Map<String, Object> values = new LinkedHashMap<>();
+
+    public void setValue(String compoundKey, Object value) {
+        String[] parts = compoundKey.split("(?<!\\\\)\\.");
+        Map<String, Object> current = values;
+
+        for (int i = 0; i < parts.length - 1; i++) {
+            String part = cleanKey(parts[i]);
+            current = (Map<String, Object>) current.computeIfAbsent(part, k -> new LinkedHashMap<>());
+        }
+
+        current.put(cleanKey(parts[parts.length - 1]), value);
+    }
+
+    private String cleanKey(String raw) {
+        raw = raw.trim();
+        if ((raw.startsWith("\"") && raw.endsWith("\"")) || (raw.startsWith("'") && raw.endsWith("'"))) {
+            raw = raw.substring(1, raw.length() - 1);
+        }
+        return raw.replace("\\\"", "\"");
+    }
+
+    public static String transformMultilineString(String multilineString) {
+        String result = multilineString.replaceAll("(^\"\"\"|\"\"\"$)|(^'''|'''$)", "");
+        result = result.replaceAll("\\\\\\n", "");
+        return result.strip();
+    }
+
+    public static String toJson(Object obj) {
+        return toJson(obj, 0);
+    }
+
+    private static String toJson(Object obj, int indent) {
+        String indentStr = "  ".repeat(indent);
+        StringBuilder sb = new StringBuilder();
+
+        if (obj instanceof Map) {
+            sb.append("{\n");
+            boolean first = true;
+            for (Map.Entry<?, ?> entry : ((Map<?, ?>) obj).entrySet()) {
+                if (!first) sb.append(",\n");
+                sb.append(indentStr).append("  \"")
+                  .append(entry.getKey()).append("\": ")
+                  .append(toJson(entry.getValue(), indent + 1));
+                first = false;
+            }
+            sb.append("\n").append(indentStr).append("}");
+        } else if (obj instanceof List) {
+            sb.append("[\n");
+            boolean first = true;
+            for (Object item : (List<?>) obj) {
+                if (!first) sb.append(",\n");
+                sb.append(indentStr).append("  ")
+                  .append(toJson(item, indent + 1));
+                first = false;
+            }
+            sb.append("\n").append(indentStr).append("]");
+        } else if (obj instanceof String) {
+            String str = (String) obj;
+            str = str.replace("\\", "\\\\").replace("\"", "\\\"");
+            sb.append("\"").append(str).append("\"");
+        } else {
+            sb.append(obj);
+        }
+
+        return sb.toString();
+    }
+
+:}
+
+terminal  EOLN, __REGEXP_1__, __REGEXP_2__, __REGEXP_3__, __REGEXP_4__, __REGEXP_5__;
+terminal String BASIC_STRING, BIN, BOOLEAN, FLOAT, HEXA, ID, INTEGER, LOCALDATE, LOCALDATETIME, LOCALTIME, MULTILINE_STRING, OCTAL;
+
+nonterminal  command, keyval, list;
+nonterminal List<Object> array, array_elements;
+nonterminal Object value;
+nonterminal String key, type;
+
+
+
+start with command;
+
+array			::=	__REGEXP_3__ array_elements:a __REGEXP_4__ {:  RESULT = (a == null) ? new ArrayList<>() : a;  :} 
+				;
+
+array_elements	::=	value:v {:  RESULT = new ArrayList<>(List.of(v));  :} 
+				|	array_elements:a __REGEXP_5__ value:v {:  a.add(v); RESULT = a;  :} 
+				;
+
+command			::=	list {:  System.out.println(toJson(parser.values));  :} 
+				;
+
+key				::=	type:t __REGEXP_2__ key:k {:  RESULT = t + "." + k;  :} 
+				|	type:t {:  RESULT = t;  :} 
+				;
+
+keyval			::=	key:k __REGEXP_1__ value:v {:  parser.setValue(k, v);  :} 
+				;
+
+list			::=	( keyval ? EOLN  ) * keyval ? 
+				;
+
+type			::=	FLOAT:f {:  RESULT = f;  :} 
+				|	ID:id {:  RESULT = id;  :} 
+				|	BASIC_STRING:basic {:  RESULT = basic;  :} 
+				|	INTEGER:i {:  RESULT = i;  :} 
+				;
+
+value			::=	BASIC_STRING:basic {:  RESULT = parser.cleanKey(basic);  :} 
+				|	MULTILINE_STRING:multi {:  RESULT = transformMultilineString(multi);  :} 
+				|	INTEGER:i {:  RESULT = parser.cleanKey(i);  :} 
+				|	FLOAT:f {:  RESULT = parser.cleanKey(f);  :} 
+				|	HEXA:hexa {:  RESULT = parser.cleanKey(hexa);  :} 
+				|	OCTAL:octal {:  RESULT = parser.cleanKey(octal);  :} 
+				|	BIN:bin {:  RESULT = parser.cleanKey(bin);  :} 
+				|	BOOLEAN:bool {:  RESULT = bool;  :} 
+				|	LOCALDATE:ld {:  RESULT = ld;  :} 
+				|	LOCALTIME:lt {:  RESULT = lt;  :} 
+				|	LOCALDATETIME:ldt {:  RESULT = ldt;  :} 
+				|	array:a {:  RESULT = a;  :} 
+				;
+

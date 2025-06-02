@@ -1,0 +1,556 @@
+===== Messages =====
+Info: Generate Terminal file : C:\Users\XPS\Downloads\compilation1\compilation\fr.uha.hassenforder.cnf.streaming\src\fr\uha\montivincent\jcupnflex\sample\calculator\reader\ETerminal.java
+Info: Generate Nonterminal file : C:\Users\XPS\Downloads\compilation1\compilation\fr.uha.hassenforder.cnf.streaming\src\fr\uha\montivincent\jcupnflex\sample\calculator\reader\ENonterminal.java
+Info: Generate Parser file : C:\Users\XPS\Downloads\compilation1\compilation\fr.uha.hassenforder.cnf.streaming\src\fr\uha\montivincent\jcupnflex\sample\calculator\reader\Parser.java
+Info: Generate Dump file : C:\Users\XPS\Downloads\compilation1\compilation\fr.uha.hassenforder.cnf.streaming\src\fr\uha\montivincent\jcupnflex\sample\calculator\reader\Parser.dump
+===== Terminals =====
+[0]error [1]EOF [2]OOA [3]EOLN 
+[4]__REGEXP_1__ [5]__REGEXP_2__ [6]__REGEXP_3__ [7]__REGEXP_4__ 
+[8]__REGEXP_5__ [9]BASIC_STRING<String> [10]BIN<String> [11]BOOLEAN<String> 
+[12]FLOAT<String> [13]HEXA<String> [14]ID<String> [15]INTEGER<String> 
+[16]LOCALDATE<String> [17]LOCALDATETIME<String> [18]LOCALTIME<String> [19]MULTILINE_STRING<String> 
+[20]OCTAL<String> 
+
+===== Non terminals =====
+[0]command [1]keyval [2]list [3]array<List<Object>> 
+[4]array_elements<List<Object>> [5]value<Object> [6]key<String> [7]type<String> 
+[0]$START<Object> [9]keyval$0_1 [10]$parenthesis1 [11]$parenthesis1$0_many 
+
+
+===== Productions =====
+[0] $START ::= command EOF 
+[1] array ::= __REGEXP_3__ array_elements __REGEXP_4__ 
+[2] array_elements ::= value 
+[3] array_elements ::= array_elements __REGEXP_5__ value 
+[4] command ::= list 
+[5] key ::= type __REGEXP_2__ key 
+[6] key ::= type 
+[7] keyval ::= key __REGEXP_1__ value 
+[8] $parenthesis1 ::= keyval$0_1 EOLN 
+[9] list ::= $parenthesis1$0_many keyval$0_1 
+[10] type ::= FLOAT 
+[11] type ::= ID 
+[12] type ::= BASIC_STRING 
+[13] type ::= INTEGER 
+[14] value ::= BASIC_STRING 
+[15] value ::= MULTILINE_STRING 
+[16] value ::= INTEGER 
+[17] value ::= FLOAT 
+[18] value ::= HEXA 
+[19] value ::= OCTAL 
+[20] value ::= BIN 
+[21] value ::= BOOLEAN 
+[22] value ::= LOCALDATE 
+[23] value ::= LOCALTIME 
+[24] value ::= LOCALDATETIME 
+[25] value ::= array 
+[26] keyval$0_1 ::= 
+[27] keyval$0_1 ::= keyval 
+[28] $parenthesis1$0_many ::= 
+[29] $parenthesis1$0_many ::= $parenthesis1$0_many $parenthesis1 
+
+===== Viable Prefix Recognizer =====
+lalr_state [0]: {
+  [$START ::= (*) command EOF , {EOF[1]}]
+  [command ::= (*) list , {EOF[1]}]
+  [list ::= (*) $parenthesis1$0_many keyval$0_1 , {EOF[1]}]
+  [$parenthesis1$0_many ::= (*) , {EOF[1], EOLN[3], BASIC_STRING<String>[9], FLOAT<String>[12], ID<String>[14], INTEGER<String>[15]}]
+  [$parenthesis1$0_many ::= (*) $parenthesis1$0_many $parenthesis1 , {EOF[1], EOLN[3], BASIC_STRING<String>[9], FLOAT<String>[12], ID<String>[14], INTEGER<String>[15]}]
+}
+transition on $parenthesis1$0_many to state [3]
+transition on list to state [2]
+transition on command to state [1]
+
+-------------------
+lalr_state [1]: {
+  [$START ::= command (*) EOF , {EOF[1]}]
+}
+transition on EOF to state [4]
+
+-------------------
+lalr_state [2]: {
+  [command ::= list (*) , {EOF[1]}]
+}
+
+-------------------
+lalr_state [3]: {
+  [list ::= $parenthesis1$0_many (*) keyval$0_1 , {EOF[1]}]
+  [$parenthesis1$0_many ::= $parenthesis1$0_many (*) $parenthesis1 , {EOF[1], EOLN[3], BASIC_STRING<String>[9], FLOAT<String>[12], ID<String>[14], INTEGER<String>[15]}]
+  [key ::= (*) type __REGEXP_2__ key , {__REGEXP_1__[4]}]
+  [key ::= (*) type , {__REGEXP_1__[4]}]
+  [keyval ::= (*) key __REGEXP_1__ value , {EOF[1], EOLN[3]}]
+  [$parenthesis1 ::= (*) keyval$0_1 EOLN , {EOF[1], EOLN[3], BASIC_STRING<String>[9], FLOAT<String>[12], ID<String>[14], INTEGER<String>[15]}]
+  [type ::= (*) FLOAT , {__REGEXP_1__[4], __REGEXP_2__[5]}]
+  [type ::= (*) ID , {__REGEXP_1__[4], __REGEXP_2__[5]}]
+  [type ::= (*) BASIC_STRING , {__REGEXP_1__[4], __REGEXP_2__[5]}]
+  [type ::= (*) INTEGER , {__REGEXP_1__[4], __REGEXP_2__[5]}]
+  [keyval$0_1 ::= (*) , {EOF[1], EOLN[3]}]
+  [keyval$0_1 ::= (*) keyval , {EOF[1], EOLN[3]}]
+}
+transition on $parenthesis1 to state [12]
+transition on keyval$0_1 to state [9]
+transition on type to state [11]
+transition on key to state [10]
+transition on keyval to state [9]
+transition on INTEGER to state [8]
+transition on ID to state [7]
+transition on FLOAT to state [6]
+transition on BASIC_STRING to state [5]
+
+-------------------
+lalr_state [4]: {
+  [$START ::= command EOF (*) , {EOF[1]}]
+}
+
+-------------------
+lalr_state [5]: {
+  [type ::= BASIC_STRING (*) , {__REGEXP_1__[4], __REGEXP_2__[5]}]
+}
+
+-------------------
+lalr_state [6]: {
+  [type ::= FLOAT (*) , {__REGEXP_1__[4], __REGEXP_2__[5]}]
+}
+
+-------------------
+lalr_state [7]: {
+  [type ::= ID (*) , {__REGEXP_1__[4], __REGEXP_2__[5]}]
+}
+
+-------------------
+lalr_state [8]: {
+  [type ::= INTEGER (*) , {__REGEXP_1__[4], __REGEXP_2__[5]}]
+}
+
+-------------------
+lalr_state [9]: {
+  [$parenthesis1 ::= keyval$0_1 (*) EOLN , {EOF[1], EOLN[3], BASIC_STRING<String>[9], FLOAT<String>[12], ID<String>[14], INTEGER<String>[15]}]
+  [list ::= $parenthesis1$0_many keyval$0_1 (*) , {EOF[1]}]
+}
+transition on EOLN to state [13]
+
+-------------------
+lalr_state [10]: {
+  [keyval ::= key (*) __REGEXP_1__ value , {EOF[1], EOLN[3]}]
+}
+transition on __REGEXP_1__ to state [14]
+
+-------------------
+lalr_state [11]: {
+  [key ::= type (*) __REGEXP_2__ key , {__REGEXP_1__[4]}]
+  [key ::= type (*) , {__REGEXP_1__[4]}]
+}
+transition on __REGEXP_2__ to state [15]
+
+-------------------
+lalr_state [12]: {
+  [$parenthesis1$0_many ::= $parenthesis1$0_many $parenthesis1 (*) , {EOF[1], EOLN[3], BASIC_STRING<String>[9], FLOAT<String>[12], ID<String>[14], INTEGER<String>[15]}]
+}
+
+-------------------
+lalr_state [13]: {
+  [$parenthesis1 ::= keyval$0_1 EOLN (*) , {EOF[1], EOLN[3], BASIC_STRING<String>[9], FLOAT<String>[12], ID<String>[14], INTEGER<String>[15]}]
+}
+
+-------------------
+lalr_state [14]: {
+  [keyval ::= key __REGEXP_1__ (*) value , {EOF[1], EOLN[3]}]
+  [array ::= (*) __REGEXP_3__ array_elements __REGEXP_4__ , {EOF[1], EOLN[3]}]
+  [value ::= (*) BASIC_STRING , {EOF[1], EOLN[3]}]
+  [value ::= (*) MULTILINE_STRING , {EOF[1], EOLN[3]}]
+  [value ::= (*) INTEGER , {EOF[1], EOLN[3]}]
+  [value ::= (*) FLOAT , {EOF[1], EOLN[3]}]
+  [value ::= (*) HEXA , {EOF[1], EOLN[3]}]
+  [value ::= (*) OCTAL , {EOF[1], EOLN[3]}]
+  [value ::= (*) BIN , {EOF[1], EOLN[3]}]
+  [value ::= (*) BOOLEAN , {EOF[1], EOLN[3]}]
+  [value ::= (*) LOCALDATE , {EOF[1], EOLN[3]}]
+  [value ::= (*) LOCALTIME , {EOF[1], EOLN[3]}]
+  [value ::= (*) LOCALDATETIME , {EOF[1], EOLN[3]}]
+  [value ::= (*) array , {EOF[1], EOLN[3]}]
+}
+transition on value to state [29]
+transition on array to state [28]
+transition on OCTAL to state [27]
+transition on MULTILINE_STRING to state [26]
+transition on LOCALTIME to state [25]
+transition on LOCALDATETIME to state [24]
+transition on LOCALDATE to state [23]
+transition on INTEGER to state [22]
+transition on HEXA to state [21]
+transition on FLOAT to state [20]
+transition on BOOLEAN to state [19]
+transition on BIN to state [18]
+transition on BASIC_STRING to state [17]
+transition on __REGEXP_3__ to state [16]
+
+-------------------
+lalr_state [15]: {
+  [key ::= type __REGEXP_2__ (*) key , {__REGEXP_1__[4]}]
+  [key ::= (*) type __REGEXP_2__ key , {__REGEXP_1__[4]}]
+  [key ::= (*) type , {__REGEXP_1__[4]}]
+  [type ::= (*) FLOAT , {__REGEXP_1__[4], __REGEXP_2__[5]}]
+  [type ::= (*) ID , {__REGEXP_1__[4], __REGEXP_2__[5]}]
+  [type ::= (*) BASIC_STRING , {__REGEXP_1__[4], __REGEXP_2__[5]}]
+  [type ::= (*) INTEGER , {__REGEXP_1__[4], __REGEXP_2__[5]}]
+}
+transition on type to state [11]
+transition on key to state [30]
+transition on INTEGER to state [8]
+transition on ID to state [7]
+transition on FLOAT to state [6]
+transition on BASIC_STRING to state [5]
+
+-------------------
+lalr_state [16]: {
+  [array ::= __REGEXP_3__ (*) array_elements __REGEXP_4__ , {EOF[1], EOLN[3], __REGEXP_4__[7], __REGEXP_5__[8]}]
+  [array ::= (*) __REGEXP_3__ array_elements __REGEXP_4__ , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [array_elements ::= (*) value , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [array_elements ::= (*) array_elements __REGEXP_5__ value , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) BASIC_STRING , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) MULTILINE_STRING , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) INTEGER , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) FLOAT , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) HEXA , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) OCTAL , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) BIN , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) BOOLEAN , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) LOCALDATE , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) LOCALTIME , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) LOCALDATETIME , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) array , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+}
+transition on value to state [32]
+transition on array_elements to state [31]
+transition on array to state [28]
+transition on OCTAL to state [27]
+transition on MULTILINE_STRING to state [26]
+transition on LOCALTIME to state [25]
+transition on LOCALDATETIME to state [24]
+transition on LOCALDATE to state [23]
+transition on INTEGER to state [22]
+transition on HEXA to state [21]
+transition on FLOAT to state [20]
+transition on BOOLEAN to state [19]
+transition on BIN to state [18]
+transition on BASIC_STRING to state [17]
+transition on __REGEXP_3__ to state [16]
+
+-------------------
+lalr_state [17]: {
+  [value ::= BASIC_STRING (*) , {EOF[1], EOLN[3], __REGEXP_4__[7], __REGEXP_5__[8]}]
+}
+
+-------------------
+lalr_state [18]: {
+  [value ::= BIN (*) , {EOF[1], EOLN[3], __REGEXP_4__[7], __REGEXP_5__[8]}]
+}
+
+-------------------
+lalr_state [19]: {
+  [value ::= BOOLEAN (*) , {EOF[1], EOLN[3], __REGEXP_4__[7], __REGEXP_5__[8]}]
+}
+
+-------------------
+lalr_state [20]: {
+  [value ::= FLOAT (*) , {EOF[1], EOLN[3], __REGEXP_4__[7], __REGEXP_5__[8]}]
+}
+
+-------------------
+lalr_state [21]: {
+  [value ::= HEXA (*) , {EOF[1], EOLN[3], __REGEXP_4__[7], __REGEXP_5__[8]}]
+}
+
+-------------------
+lalr_state [22]: {
+  [value ::= INTEGER (*) , {EOF[1], EOLN[3], __REGEXP_4__[7], __REGEXP_5__[8]}]
+}
+
+-------------------
+lalr_state [23]: {
+  [value ::= LOCALDATE (*) , {EOF[1], EOLN[3], __REGEXP_4__[7], __REGEXP_5__[8]}]
+}
+
+-------------------
+lalr_state [24]: {
+  [value ::= LOCALDATETIME (*) , {EOF[1], EOLN[3], __REGEXP_4__[7], __REGEXP_5__[8]}]
+}
+
+-------------------
+lalr_state [25]: {
+  [value ::= LOCALTIME (*) , {EOF[1], EOLN[3], __REGEXP_4__[7], __REGEXP_5__[8]}]
+}
+
+-------------------
+lalr_state [26]: {
+  [value ::= MULTILINE_STRING (*) , {EOF[1], EOLN[3], __REGEXP_4__[7], __REGEXP_5__[8]}]
+}
+
+-------------------
+lalr_state [27]: {
+  [value ::= OCTAL (*) , {EOF[1], EOLN[3], __REGEXP_4__[7], __REGEXP_5__[8]}]
+}
+
+-------------------
+lalr_state [28]: {
+  [value ::= array (*) , {EOF[1], EOLN[3], __REGEXP_4__[7], __REGEXP_5__[8]}]
+}
+
+-------------------
+lalr_state [29]: {
+  [keyval ::= key __REGEXP_1__ value (*) , {EOF[1], EOLN[3]}]
+}
+
+-------------------
+lalr_state [30]: {
+  [key ::= type __REGEXP_2__ key (*) , {__REGEXP_1__[4]}]
+}
+
+-------------------
+lalr_state [31]: {
+  [array ::= __REGEXP_3__ array_elements (*) __REGEXP_4__ , {EOF[1], EOLN[3], __REGEXP_4__[7], __REGEXP_5__[8]}]
+  [array_elements ::= array_elements (*) __REGEXP_5__ value , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+}
+transition on __REGEXP_5__ to state [34]
+transition on __REGEXP_4__ to state [33]
+
+-------------------
+lalr_state [32]: {
+  [array_elements ::= value (*) , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+}
+
+-------------------
+lalr_state [33]: {
+  [array ::= __REGEXP_3__ array_elements __REGEXP_4__ (*) , {EOF[1], EOLN[3], __REGEXP_4__[7], __REGEXP_5__[8]}]
+}
+
+-------------------
+lalr_state [34]: {
+  [array_elements ::= array_elements __REGEXP_5__ (*) value , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [array ::= (*) __REGEXP_3__ array_elements __REGEXP_4__ , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) BASIC_STRING , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) MULTILINE_STRING , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) INTEGER , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) FLOAT , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) HEXA , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) OCTAL , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) BIN , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) BOOLEAN , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) LOCALDATE , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) LOCALTIME , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) LOCALDATETIME , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+  [value ::= (*) array , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+}
+transition on value to state [35]
+transition on array to state [28]
+transition on OCTAL to state [27]
+transition on MULTILINE_STRING to state [26]
+transition on LOCALTIME to state [25]
+transition on LOCALDATETIME to state [24]
+transition on LOCALDATE to state [23]
+transition on INTEGER to state [22]
+transition on HEXA to state [21]
+transition on FLOAT to state [20]
+transition on BOOLEAN to state [19]
+transition on BIN to state [18]
+transition on BASIC_STRING to state [17]
+transition on __REGEXP_3__ to state [16]
+
+-------------------
+lalr_state [35]: {
+  [array_elements ::= array_elements __REGEXP_5__ value (*) , {__REGEXP_4__[7], __REGEXP_5__[8]}]
+}
+
+-------------------
+-------- ACTION_TABLE --------
+From state #0
+ [default:ERROR]
+ [term 1:REDUCE(27)] [term 3:REDUCE(27)]
+ [term 9:REDUCE(27)] [term 12:REDUCE(27)]
+ [term 14:REDUCE(27)] [term 15:REDUCE(27)]
+From state #1
+ [default:ERROR]
+ [term 1:SHIFT(4)]
+From state #2
+ [default:ERROR]
+ [term 1:REDUCE(4)]
+From state #3
+ [default:ERROR]
+ [term 1:REDUCE(26)] [term 3:REDUCE(26)]
+ [term 9:SHIFT(5)] [term 12:SHIFT(6)]
+ [term 14:SHIFT(7)] [term 15:SHIFT(8)]
+From state #4
+ [default:ERROR]
+ [term 1:REDUCE(0)]
+From state #5
+ [default:ERROR]
+ [term 4:REDUCE(12)] [term 5:REDUCE(12)]
+From state #6
+ [default:ERROR]
+ [term 4:REDUCE(10)] [term 5:REDUCE(10)]
+From state #7
+ [default:ERROR]
+ [term 4:REDUCE(11)] [term 5:REDUCE(11)]
+From state #8
+ [default:ERROR]
+ [term 4:REDUCE(13)] [term 5:REDUCE(13)]
+From state #9
+ [default:ERROR]
+ [term 1:REDUCE(9)] [term 3:SHIFT(13)]
+From state #10
+ [default:ERROR]
+ [term 4:SHIFT(14)]
+From state #11
+ [default:ERROR]
+ [term 4:REDUCE(6)] [term 5:SHIFT(15)]
+From state #12
+ [default:ERROR]
+ [term 1:REDUCE(28)] [term 3:REDUCE(28)]
+ [term 9:REDUCE(28)] [term 12:REDUCE(28)]
+ [term 14:REDUCE(28)] [term 15:REDUCE(28)]
+From state #13
+ [default:ERROR]
+ [term 1:REDUCE(8)] [term 3:REDUCE(8)]
+ [term 9:REDUCE(8)] [term 12:REDUCE(8)]
+ [term 14:REDUCE(8)] [term 15:REDUCE(8)]
+From state #14
+ [default:ERROR]
+ [term 6:SHIFT(16)] [term 9:SHIFT(17)]
+ [term 10:SHIFT(18)] [term 11:SHIFT(19)]
+ [term 12:SHIFT(20)] [term 13:SHIFT(21)]
+ [term 15:SHIFT(22)] [term 16:SHIFT(23)]
+ [term 17:SHIFT(24)] [term 18:SHIFT(25)]
+ [term 19:SHIFT(26)] [term 20:SHIFT(27)]
+From state #15
+ [default:ERROR]
+ [term 9:SHIFT(5)] [term 12:SHIFT(6)]
+ [term 14:SHIFT(7)] [term 15:SHIFT(8)]
+From state #16
+ [default:ERROR]
+ [term 6:SHIFT(16)] [term 9:SHIFT(17)]
+ [term 10:SHIFT(18)] [term 11:SHIFT(19)]
+ [term 12:SHIFT(20)] [term 13:SHIFT(21)]
+ [term 15:SHIFT(22)] [term 16:SHIFT(23)]
+ [term 17:SHIFT(24)] [term 18:SHIFT(25)]
+ [term 19:SHIFT(26)] [term 20:SHIFT(27)]
+From state #17
+ [default:ERROR]
+ [term 1:REDUCE(14)] [term 3:REDUCE(14)]
+ [term 7:REDUCE(14)] [term 8:REDUCE(14)]
+From state #18
+ [default:ERROR]
+ [term 1:REDUCE(20)] [term 3:REDUCE(20)]
+ [term 7:REDUCE(20)] [term 8:REDUCE(20)]
+From state #19
+ [default:ERROR]
+ [term 1:REDUCE(21)] [term 3:REDUCE(21)]
+ [term 7:REDUCE(21)] [term 8:REDUCE(21)]
+From state #20
+ [default:ERROR]
+ [term 1:REDUCE(17)] [term 3:REDUCE(17)]
+ [term 7:REDUCE(17)] [term 8:REDUCE(17)]
+From state #21
+ [default:ERROR]
+ [term 1:REDUCE(18)] [term 3:REDUCE(18)]
+ [term 7:REDUCE(18)] [term 8:REDUCE(18)]
+From state #22
+ [default:ERROR]
+ [term 1:REDUCE(16)] [term 3:REDUCE(16)]
+ [term 7:REDUCE(16)] [term 8:REDUCE(16)]
+From state #23
+ [default:ERROR]
+ [term 1:REDUCE(22)] [term 3:REDUCE(22)]
+ [term 7:REDUCE(22)] [term 8:REDUCE(22)]
+From state #24
+ [default:ERROR]
+ [term 1:REDUCE(24)] [term 3:REDUCE(24)]
+ [term 7:REDUCE(24)] [term 8:REDUCE(24)]
+From state #25
+ [default:ERROR]
+ [term 1:REDUCE(23)] [term 3:REDUCE(23)]
+ [term 7:REDUCE(23)] [term 8:REDUCE(23)]
+From state #26
+ [default:ERROR]
+ [term 1:REDUCE(15)] [term 3:REDUCE(15)]
+ [term 7:REDUCE(15)] [term 8:REDUCE(15)]
+From state #27
+ [default:ERROR]
+ [term 1:REDUCE(19)] [term 3:REDUCE(19)]
+ [term 7:REDUCE(19)] [term 8:REDUCE(19)]
+From state #28
+ [default:ERROR]
+ [term 1:REDUCE(25)] [term 3:REDUCE(25)]
+ [term 7:REDUCE(25)] [term 8:REDUCE(25)]
+From state #29
+ [default:ERROR]
+ [term 1:REDUCE(7)] [term 3:REDUCE(7)]
+From state #30
+ [default:ERROR]
+ [term 4:REDUCE(5)]
+From state #31
+ [default:ERROR]
+ [term 7:SHIFT(33)] [term 8:SHIFT(34)]
+From state #32
+ [default:ERROR]
+ [term 7:REDUCE(2)] [term 8:REDUCE(2)]
+From state #33
+ [default:ERROR]
+ [term 1:REDUCE(1)] [term 3:REDUCE(1)]
+ [term 7:REDUCE(1)] [term 8:REDUCE(1)]
+From state #34
+ [default:ERROR]
+ [term 6:SHIFT(16)] [term 9:SHIFT(17)]
+ [term 10:SHIFT(18)] [term 11:SHIFT(19)]
+ [term 12:SHIFT(20)] [term 13:SHIFT(21)]
+ [term 15:SHIFT(22)] [term 16:SHIFT(23)]
+ [term 17:SHIFT(24)] [term 18:SHIFT(25)]
+ [term 19:SHIFT(26)] [term 20:SHIFT(27)]
+From state #35
+ [default:ERROR]
+ [term 7:REDUCE(3)] [term 8:REDUCE(3)]
+------------------------------
+-------- REDUCE_TABLE --------
+From state #0
+ [non term 0->state 1] [non term 2->state 2] [non term 11->state 3]
+From state #1
+From state #2
+From state #3
+ [non term 1->state 9] [non term 6->state 10] [non term 7->state 11]
+ [non term 9->state 9] [non term 10->state 12]
+From state #4
+From state #5
+From state #6
+From state #7
+From state #8
+From state #9
+From state #10
+From state #11
+From state #12
+From state #13
+From state #14
+ [non term 3->state 28] [non term 5->state 29]
+From state #15
+ [non term 6->state 30] [non term 7->state 11]
+From state #16
+ [non term 3->state 28] [non term 4->state 31] [non term 5->state 32]
+From state #17
+From state #18
+From state #19
+From state #20
+From state #21
+From state #22
+From state #23
+From state #24
+From state #25
+From state #26
+From state #27
+From state #28
+From state #29
+From state #30
+From state #31
+From state #32
+From state #33
+From state #34
+ [non term 3->state 28] [non term 5->state 35]
+From state #35
+-----------------------------
