@@ -1,0 +1,36 @@
+function square (len)
+{
+	repeat 4 times {
+		move len; turn 90;
+	};
+}
+
+function polygon (len, count)
+{
+	repeat count times {
+		move len; turn 360/count;
+	};
+}
+
+function spirale (count, initial, step, angle)
+{
+	s=initial;
+	repeat count times {
+		move s;	turn angle; s=s+step;
+	};
+}
+
+frame 600, 400;
+square 50;
+pen off;
+goto 100, 100;
+pen on;
+polygon 10, 6;
+pen off;
+goto 200, 100;
+pen on;
+spirale 10, 2, 5, 30;
+pen off;
+goto 200, 200;
+pen on;
+spirale 10, 2, 1, 60;
