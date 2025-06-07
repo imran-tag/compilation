@@ -1,0 +1,74 @@
+package fr.uha.montivincent.jcupnflex.sample.calculator.reader;
+
+
+import java.util.TreeMap;
+import java.util.Map;
+
+
+
+parser code {:
+
+    
+    public void report_error(String message, Object info) {
+        StringBuffer m = new StringBuffer("Error");
+		m.append (info.toString());
+        m.append(" : "+message);
+        System.err.println(m.toString());
+    }
+   
+    public void report_fatal_error(String message, Object info) {
+        report_error(message, info);
+        System.exit(1);
+    }
+
+	private Map<String, Integer> values = new TreeMap<String, Integer> ();
+
+	public void setValue (String name, int value) {
+		values.put(name, Integer.valueOf (value));
+	}
+	
+	public int getValue (String name) {
+		int value = 0;
+		if (values.containsKey(name))
+			value = values.get(name).intValue();
+		return value;
+	}
+
+
+:}
+
+terminal  EOLN, UNARIES, __REGEXP_1__, __REGEXP_2__, __REGEXP_3__, __REGEXP_4__, __REGEXP_5__, __REGEXP_6__, __REGEXP_7__;
+terminal Integer NUMBER;
+terminal String ID;
+
+nonterminal  command, instr, list;
+nonterminal Integer expr;
+
+precedence left __REGEXP_1__, __REGEXP_2__;
+precedence left __REGEXP_3__, __REGEXP_4__;
+precedence right UNARIES;
+
+
+start with command;
+
+command	::=	list 
+		;
+
+expr	::=	expr:e1 __REGEXP_1__ expr:e2 {:  RESULT = e1 + e2;  :} 
+		|	expr:e1 __REGEXP_2__ expr:e2 {:  RESULT = e1 - e2;  :} 
+		|	expr:e1 __REGEXP_3__ expr:e2 {:  RESULT = e1 * e2;  :} 
+		|	expr:e1 __REGEXP_4__ expr:e2 {:  RESULT = e1 / e2;  :} 
+		|	__REGEXP_2__ expr:e {:  RESULT = - e;  :}  %prec UNARIES
+		|	__REGEXP_1__ expr:e {:  RESULT = + e;  :}  %prec UNARIES
+		|	__REGEXP_6__ expr:e __REGEXP_7__ {:  RESULT = e;  :} 
+		|	NUMBER:n {:  RESULT = n;  :} 
+		|	ID:n {:  RESULT = parser.getValue(n);  :} 
+		;
+
+instr	::=	ID:n __REGEXP_5__ expr:e {:  parser.setValue (n, e);  :} 
+		|	expr:e {:  System.out.println (e);  :} 
+		;
+
+list	::=	( instr EOLN  ) * 
+		;
+
