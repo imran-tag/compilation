@@ -1,7 +1,0 @@
-Reading "C:\Users\XPS\Downloads\compilation1\compilation\fr.uha.hassenforder.cnf.streaming\src\Scanner-streaming-start.flex"
-Constructing NFA : 
-26 states in NFA
-Converting NFA to DFA : 
-...........
-15 states before minimization, 11 states in minimized DFA
-Writing code to "C:\Users\XPS\Downloads\compilation1\compilation\fr.uha.hassenforder.cnf.streaming\src\fr\uha\hassenforder\logo\reader\Lexer.java"

@@ -1,4 +1,0 @@
-frame 600, 400;
-
-up 10; left 10; down 10; right 10;
-

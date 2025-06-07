@@ -1,6 +1,0 @@
-Reading "C:\Users\XPS\Downloads\compilation1\compilation\fr.uha.hassenforder.cnf.streaming\src\Scanner-tomlToJson.flex"
-
-Error in file "C:\Users\XPS\Downloads\compilation1\compilation\fr.uha.hassenforder.cnf.streaming\src\Scanner-tomlToJson.flex" (line 42): 
-Unterminated string at end of line.
-  \"\"\"([^"]|\\.)*\"\"\"		{ return symbol(ETerminal.MULTILINE_STRING, yytext()); }
-                                                                                   ^
