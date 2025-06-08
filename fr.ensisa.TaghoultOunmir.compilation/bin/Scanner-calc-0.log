@@ -1,0 +1,8 @@
+Reading "C:\Users\XPS\eclipse-workspace\fr.ensisa.TaghoultOunmir.compilation\src\Scanner-calc.flex"
+Constructing NFA : 
+171 states in NFA
+Converting NFA to DFA : 
+.......................................................................
+75 states before minimization, 66 states in minimized DFA
+Old file "C:\Users\XPS\eclipse-workspace\fr.ensisa.TaghoultOunmir.compilation\src\fr\uha\montivincent\jcupnflex\sample\calculator\reader\Lexer.java" saved as "C:\Users\XPS\eclipse-workspace\fr.ensisa.TaghoultOunmir.compilation\src\fr\uha\montivincent\jcupnflex\sample\calculator\reader\Lexer.java~"
+Writing code to "C:\Users\XPS\eclipse-workspace\fr.ensisa.TaghoultOunmir.compilation\src\fr\uha\montivincent\jcupnflex\sample\calculator\reader\Lexer.java"

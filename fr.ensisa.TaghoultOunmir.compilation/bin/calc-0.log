@@ -1,0 +1,6 @@
+Warning: Scanner at 109(25): Unrecognized character '{' -- ignored
+Warning: Scanner at 109(26): Unrecognized character '}' -- ignored
+Info: Delete File : C:\Users\XPS\eclipse-workspace\fr.ensisa.TaghoultOunmir.compilation\src\Parser-calc.cup
+Info: Generate Parser : C:\Users\XPS\eclipse-workspace\fr.ensisa.TaghoultOunmir.compilation\src\Parser-calc.cup
+Info: Delete File : C:\Users\XPS\eclipse-workspace\fr.ensisa.TaghoultOunmir.compilation\src\Scanner-calc.flex
+Info: Generate Lexer : C:\Users\XPS\eclipse-workspace\fr.ensisa.TaghoultOunmir.compilation\src\Scanner-calc.flex

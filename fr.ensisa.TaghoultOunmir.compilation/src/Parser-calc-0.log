@@ -1,0 +1,17 @@
+Warning: Non terminal "tab" has no production
+Warning: Non terminal "tpair" was declared but never used
+Info: Delete file : C:\Users\XPS\eclipse-workspace\fr.ensisa.TaghoultOunmir.compilation\src\fr\uha\montivincent\jcupnflex\sample\calculator\reader\ETerminal.java
+Info: Delete file : C:\Users\XPS\eclipse-workspace\fr.ensisa.TaghoultOunmir.compilation\src\fr\uha\montivincent\jcupnflex\sample\calculator\reader\ENonterminal.java
+Info: Delete file : C:\Users\XPS\eclipse-workspace\fr.ensisa.TaghoultOunmir.compilation\src\fr\uha\montivincent\jcupnflex\sample\calculator\reader\Parser.java
+Info: Delete file : C:\Users\XPS\eclipse-workspace\fr.ensisa.TaghoultOunmir.compilation\src\fr\uha\montivincent\jcupnflex\sample\calculator\reader\Parser.dump
+Warning: *** Shift/Reduce conflict found in state #8
+  between compositekey ::= simplekey (*)
+  and     array ::= simplekey (*) __REGEXP_1__ pairarray 
+  and     pairkeyval ::= key (*) __REGEXP_1__ value 
+  under symbol __REGEXP_1__[4]
+  Resolved in favor of shifting.
+
+Info: Generate Terminal file : C:\Users\XPS\eclipse-workspace\fr.ensisa.TaghoultOunmir.compilation\src\fr\uha\montivincent\jcupnflex\sample\calculator\reader\ETerminal.java
+Info: Generate Nonterminal file : C:\Users\XPS\eclipse-workspace\fr.ensisa.TaghoultOunmir.compilation\src\fr\uha\montivincent\jcupnflex\sample\calculator\reader\ENonterminal.java
+Info: Generate Parser file : C:\Users\XPS\eclipse-workspace\fr.ensisa.TaghoultOunmir.compilation\src\fr\uha\montivincent\jcupnflex\sample\calculator\reader\Parser.java
+Info: Generate Dump file : C:\Users\XPS\eclipse-workspace\fr.ensisa.TaghoultOunmir.compilation\src\fr\uha\montivincent\jcupnflex\sample\calculator\reader\Parser.dump

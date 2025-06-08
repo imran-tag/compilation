@@ -1,0 +1,160 @@
+package fr.uha.montivincent.jcupnflex.sample.calculator.reader;
+
+parser import code {:
+import java.util.*;
+:}
+
+parser code {:
+    
+    public void report_error(String message, Object info) {
+        System.err.println("Error" + info.toString() + " : " + message);
+    }
+   
+    public void report_fatal_error(String message, Object info) {
+        report_error(message, info);
+        System.exit(1);
+    }
+
+    private static Map<String, Object> vals = new HashMap<>();
+    private String currtab = null;
+
+    public void setCurrentTable(String tableName) {
+        currtab = tableName;
+        vals.putIfAbsent(tableName, new HashMap<String, Object>());
+    }
+
+    public void setValue(Object name, Object value) {
+        if (value instanceof Map) {
+            vals.put(name.toString(), value);
+        } else {
+            Map<String, Object> current = vals;
+
+            if (currtab != null) {
+                current = (Map<String, Object>) vals.get(currtab);
+            }
+
+            String[] keys = name.toString().split("\\.");
+            for (int i = 0; i < keys.length - 1; i++) {
+                current.putIfAbsent(keys[i], new HashMap<String, Object>());
+                current = (Map<String, Object>) current.get(keys[i]);
+            }
+
+            String lkey = keys[keys.length - 1];
+
+            if (current.containsKey(lkey)) {
+                Object exstVal = current.get(lkey);
+                if (exstVal instanceof List<?>) {
+                    ((List<Object>) exstVal).add(value);
+                } else {
+                    List<Object> valsList = new ArrayList<>();
+                    valsList.add(exstVal);
+                    valsList.add(value);
+                    current.put(lkey, valsList);
+                }
+            } else {
+                current.put(lkey, value);
+            }
+        }
+
+        // Simple string representation instead of JSON
+        System.out.println("NEW DATA: " + vals.toString());
+    }
+
+    public Object getValue(String name) {
+        return vals.getOrDefault(name, "");
+    }
+    
+    private Map<String, Object> globalPairs = new HashMap<>();
+    private List<Object> arrValsList = new ArrayList<>();
+
+:}
+
+scanner code {:
+    private Symbol fallback () {
+		throw new Error("Unrecognized character '"+yytext()+"' -- ignored");
+	}    
+:}
+
+terminal			EOLN;
+terminal String QTDSTR, UNQTDSTR, COMMENT, COMMA;
+terminal Integer INTEGER;
+terminal Float DOUBLE;
+terminal Boolean BOOLEAN;
+terminal String DATE, TIME;
+nonterminal 		document, input, pairkeyval, tab, tpair, pairarray, array, myarrVals;
+nonterminal Object key, value, compositekey, simplekey;
+
+start with document;
+
+document ::= input*;
+
+input	::=	pairkeyval
+		| tab
+		| array
+		| COMMENT
+		| EOLN
+		;
+
+pairkeyval ::= key:k '=' value:v {:
+    parser.setValue(k.toString(), v);
+    parser.globalPairs.put(k.toString(), v);
+:};
+
+myarrVals ::= value:v {:
+    parser.arrValsList.add(v);
+:};
+
+terminal void SUPPRESS;
+
+COMMENT 	::= "#" ~ "\n" {}
+			;
+COMMA ::= ",";
+
+SUPPRESS	::=	`[ \t\f]`
+			;
+
+EOLN		::=	`\r\n|\r|\n`
+			;
+
+QTDSTR ::= `\"([^\"\\]|\\.)*\"`
+      | `\'([^\'\\]|\\.)*\`;
+
+INTEGER ::= `[+-]?[0-9]+`;
+   
+UNQTDSTR ::= `[a-zA-Z_][a-zA-Z0-9_-]*`;
+
+DOUBLE ::= `[+-]?[0-9]*\.[0-9]+([eE][+-]?[0-9]+)?`
+        | `[+-]?[0-9]+([eE][+-]?[0-9]+)`;
+
+BOOLEAN ::= "true" {: RESULT = true; :}
+	 | "false" {: RESULT = false; :}
+	 ;
+
+DATE    ::= `\d{4}-\d{2}-\d{2}`;
+TIME    ::= `\d{2}:\d{2}:\d{2}(\.\d{1,6})?`;
+
+simplekey ::= QTDSTR:qs {: RESULT = qs; :}
+		| UNQTDSTR:us {: RESULT = us; :}
+		;
+
+compositekey ::= simplekey:sk '.' compositekey:ck {: RESULT =sk + "." + ck; :}
+			| simplekey:sk {: RESULT = sk; :}
+			;
+
+key ::= simplekey
+	| compositekey
+	;
+
+array::= simplekey:k '=' pairarray {: parser.setValue(k, parser.arrValsList);parser.arrValsList.clear(); :};
+
+pairarray ::= '[' value:v (COMMA myarrVals)* ']' {: 
+    parser.arrValsList.add(v);
+:};
+
+value ::= QTDSTR:qs {: RESULT = qs; :}
+        | BOOLEAN:b {: RESULT = b; :}
+        | INTEGER:i {: RESULT = i; :}
+        | DOUBLE:d {: RESULT = d; :}
+        | DATE:d {: RESULT = d; :}
+        | TIME:t {: RESULT = t; :}
+        ;
